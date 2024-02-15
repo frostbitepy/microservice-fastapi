@@ -1,38 +1,19 @@
 from fastapi import Header, APIRouter, HTTPException
 from typing import List
-from .models import Movie
+from app.api.models import Movie
+from app.api import db_manager
 
-
-fake_movie_db = [
-    {
-        'name': 'Star Wars: Episode IX - The Rise of Skywalker',
-        'plot': 'The surviving members of the resistance face the First Order once again.',
-        'genres': ['Action', 'Adventure', 'Fantasy'],
-        'casts': ['Daisy Ridley', 'Adam Driver']
-    },
-    {
-        "name": "The Shawshank Redemption",
-        "plot": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
-        "genres": ["Drama"],
-        "casts": ["Tim Robbins", "Morgan Freeman"]
-    },
-    {
-        "name": "Jurassic Park",
-        "plot": "A group of people try to escape an island populated by genetically cloned dinosaurs.",
-        "genres": ["Action", "Adventure", "Sci-Fi"],
-        "casts": ["Sam Neill", "Laura Dern"]
-    }
-]
 
 movies = APIRouter()
 
+
 @movies.get('/', response_model=List[Movie])
 async def index():
-    return fake_movie_db
+    return await db_manager.get_all_movies()
 
 
 @movies.post('/', status_code=201)
-async def add_movie(payload: Movie):
+async def add_movie(payload: MovieIn):
     movie = payload.dict()
     fake_movie_db.append(movie)
     return {'id': len(fake_movie_db) -1}

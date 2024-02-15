@@ -7,3 +7,6 @@ class Movie(BaseModel):
     plot: str
     genres: List[str]
     casts: List[str]
+
+    class Config:
+        orm_mode = True
